@@ -1,3 +1,4 @@
+
 """
 ------------------------------- Задание -------------------------------
 В Англии валютой являются фунты стерлингов £ и пенсы p, и в обращении
@@ -11,31 +12,37 @@
 количество монет?
 """
 
-# coins_all = [100, 50, 20, 10, 5, 2, 1]
-coins_all = [5, 2, 1]
 
+class CombinationsCoins:
+    def __init__(self, limit=200, coins_all=None):
+        if coins_all is None:
+            coins_all = [200, 100, 50, 20, 10, 5, 2, 1]
+        self._coins_all = coins_all
+        self._combinations = 0
+        self._limit = limit
+        self.coin_tree(self._coins_all, 0)
 
-def coin_tree(coins, sum_coins, sequence):
-    if sum_coins + coins[0] < limit:
-        if limit - sum_coins - coins[0] >= coins[0]:
-            coin_tree(coins, sum_coins + coins[0], sequence+str(coins[0]))
-        else:
-            coin_tree(coins[1:], sum_coins+coins[0], sequence+str(coins[0]))
-    elif sum_coins + coins[0] == limit:
-        print(sequence + str(coins[0]))
-    #     combinations += 1
+    def coin_tree(self, coins, sum_coins):
+        if coins[0] == 1:
+            self._combinations += 1
+        elif sum_coins + coins[0] < self._limit:
+            if self._limit - sum_coins - coins[0] >= coins[0]:
+                self.coin_tree(coins, sum_coins+coins[0])
+            else:
+                self.coin_tree(coins[1:], sum_coins+coins[0])
+        elif sum_coins + coins[0] == self._limit:
+            self._combinations += 1
 
-    for coin in coins[1:]:
-        if sum_coins + coin < limit:
-            coin_tree(coins[coins.index(coin):], sum_coins+coin, sequence+str(coin))
-        elif sum_coins + coin == limit:
-            print(sequence+str(coin))
-            # global combinations
-            # combinations += 1
+        for i, coin in enumerate(coins[1:]):
+            if sum_coins + coin < self._limit:
+                self.coin_tree(coins[i+1:], sum_coins+coin)
+            elif sum_coins + coin == self._limit:
+                self._combinations += 1
+
+    def get_combinations(self):
+        return self._combinations
 
 
 if __name__ == '__main__':
-    limit = 10
-    combinations = 0
-    coin_tree(coins_all, 0, '')
-    # print(combinations)
+    combinations_coins = CombinationsCoins()
+    print('Ответ:', combinations_coins.get_combinations())
